@@ -1,0 +1,22 @@
+{
+    "name": "apkpanel/panel",
+    "description": "APKPanel",
+    "type": "project",
+    "require": {
+        "phpmailer/phpmailer": "^6.6",
+        "guzzlehttp/guzzle": "^7.4",
+      "ext-pdo": "*"
+    },
+    "license": "MIT",
+    "autoload": {
+        "psr-4": {
+            "Apkpanel\\": "src"
+        }
+    },
+    "authors": [
+        {
+            "name": "Hersio-V",
+            "email": "hersiomuhammet@gmail.com"
+        }
+    ]
+}
