@@ -79,7 +79,7 @@ if (!isset($_SESSION[$config->getSessionName()])) {
                             <i class="fas fa-gear"></i>Ayarlar</a>
                         <ul class="list-unstyled navbar__sub-list js-sub-list" style="">
                             <li>
-                                <a href="<?php echo $url . 'settings.php'; ?>">Hesap</a>
+                                <a href="<?php echo $url . 'settings.php'; ?>">Hesap Bilgileri</a>
                             </li>
                             <li>
                                 <a href="<?php echo $url . 'templates.php'; ?>">İçerik Taslakları</a>
@@ -114,7 +114,7 @@ if (!isset($_SESSION[$config->getSessionName()])) {
                             <i class="fas fa-gear"></i>Ayarlar</a>
                         <ul class="list-unstyled navbar__sub-list js-sub-list" style="">
                             <li>
-                                <a href="<?php echo $url . 'settings.php'; ?>">Hesap</a>
+                                <a href="<?php echo $url . 'settings.php'; ?>">Hesap Bilgileri</a>
                             </li>
                             <li>
                                 <a href="<?php echo $url . 'templates.php'; ?>">İçerik Taslakları</a>
@@ -150,13 +150,12 @@ if (!isset($_SESSION[$config->getSessionName()])) {
                                                 <h5 class="name">
                                                     <a href="#"><?php echo $_SESSION['username']; ?></a>
                                                 </h5>
-                                                <span class="email"><?php echo $_SESSION['mail']; ?></span>
                                             </div>
                                         </div>
                                         <div class="account-dropdown__body">
                                             <div class="account-dropdown__item">
                                                 <a href="<?php echo $url . "settings.php";  ?>">
-                                                    <i class="zmdi zmdi-settings"></i>Ayarlar</a>
+                                                    <i class="zmdi zmdi-settings"></i>Hesap Bilgileri</a>
                                             </div>
                                         </div>
                                         <div class="account-dropdown__footer">

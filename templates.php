@@ -1,8 +1,12 @@
 <?php
+
+use Apkpanel\Account;
+
 $db = "";
+$url = "";
 // Header
 include __DIR__ . "/header.php";
-$account = new \Apkpanel\Account($db, $_SESSION['username']);
+$account = new Account($db, $_SESSION['username']);
 $templates = $account->getTemplates('t_name');
 
 ?>
@@ -10,6 +14,36 @@ $templates = $account->getTemplates('t_name');
     <div class="main-content">
         <div class="section__content section__content--p30">
             <div class="container-fluid">
+                <?php
+
+                switch (@$_GET['status']) {
+                    case 'error':
+                        echo ' <div class="sufee-alert alert with-close alert-danger alert-dismissible fade show">
+                                    <span class="badge badge-pill badge-danger">Başarısız</span>
+                                                    Ayarlarınız kaydedilemedi.
+                                             <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                                             <span aria-hidden="true">×</span>
+                                                                                     </button>
+                                                                                                          </div>';
+                        break;
+                    case 'server-error':
+                        echo '<div class="alert alert-warning" role="alert">
+            Hata! lütfen daha sonra tekrar deneyin.
+        </div>';
+                        break;
+
+                    case 'success':
+                        echo '<div class="sufee-alert alert with-close alert-success alert-dismissible fade show">
+                                    <span class="badge badge-pill badge-success">Başarılı</span>
+                                                    Ayarlarınız kaydedildi.
+                                             <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                                             <span aria-hidden="true">×</span>
+                                                                                     </button>
+                                                                                                          </div>';
+                        break;
+                }
+
+                ?>
                 <div class="row">
                     <div class="col-lg-10">
                         <div class="card">
@@ -17,58 +51,65 @@ $templates = $account->getTemplates('t_name');
                                 <strong class="card-title">İçerik Taslakları</strong>
                             </div>
                             <div class="card-body">
-                                <form action="" method="post" class="form-horizontal">
+                                <form action="<?php echo $url . "settings/actions/templateSettings.php"; ?>"
+                                      method="post" class="form-horizontal">
                                     <div class="row form-group">
                                         <div class="col col-md-3">
-                                            <label for="selectSm" class="form-control-label">Taslak
+                                            <label for="selectTemplate" class="form-control-label">Taslak
                                                 Seç</label>
                                         </div>
                                         <div class="col-12 col-md-9">
-                                            <select name="selectTemplate" id="SelectLm"
-                                                    class="form-control-sm form-control" onchange="getTemplate(this.value)">
+                                            <select name="selectTemplate" id="selectTemplate"
+                                                    class="form-control-sm form-control"
+                                                    onchange="getTemplate(this.value)">
                                                 <option value="0">Yeni Ekle</option>
-                                                <?php  foreach ($templates as $template) { ?>
-                                               <option value="<?php echo $template; ?>"><?php echo $template; ?></option>
-<?php }  ?>
+                                                <?php foreach ($templates as $template) { ?>
+                                                    <option value="<?php echo $template; ?>"><?php echo $template; ?></option>
+                                                <?php } ?>
                                             </select>
                                         </div>
                                     </div>
 
                                     <div class="row form-group">
                                         <div class="col col-md-3">
-                                            <label for="text-input" class=" form-control-label">Taslak
+                                            <label for="templateName" class=" form-control-label">Taslak
                                                 Adı</label>
                                         </div>
                                         <div class="col-12 col-md-9">
-                                            <input type="text" id="templateName" name="name"
+                                            <input type="text" id="templateName" name="templateName"
                                                    placeholder="Taslak Adı" class="form-control">
                                         </div>
                                     </div>
 
                                     <div class="row form-group">
                                         <div class="col col-md-3">
-                                            <label for="text-input" class=" form-control-label">Yazı Başlığı
+                                            <label for="templateTitle" class=" form-control-label">Yazı Başlığı
                                                 Taslağı</label>
                                         </div>
                                         <div class="col-12 col-md-9">
-                                            <input type="text" id="templateTitle" name="title"
+                                            <input type="text" id="templateTitle" name="templateTitle"
                                                    placeholder="Başlık Taslağı" class="form-control">
                                         </div>
                                     </div>
 
                                     <div class="row form-group">
                                         <div class="col col-md-3">
-                                            <label for="textarea-input" class=" form-control-label">Yazı
+                                            <label for="templateContent" class=" form-control-label">Yazı
                                                 İçeriği Taslağı</label>
                                         </div>
                                         <div class="col-12 col-md-9">
-                                                        <textarea name="content" id="templateContent" rows="9"
+                                                        <textarea name="templateContent" id="templateContent" rows="9"
                                                                   placeholder="Taslağınız.." class="form-control"
                                                                   spellcheck="false"></textarea>
                                         </div>
                                     </div>
 
-                                    <button id="saveTemplate" name="saveTemplate" type="submit" class="btn btn-success btn-sm"><i class="fa fa-check"></i> Kaydet</button>
+                                    <button id="saveTemplate" name="saveTemplate" type="submit"
+                                            class="btn btn-success btn-sm"><i class="fa fa-check"></i> Kaydet
+                                    </button>
+                                    <button id="deleteTemplate" disabled name="deleteTemplate" type="submit"
+                                            class="btn btn-danger btn-sm"><i class="fa fa-times-circle"></i> Sil
+                                    </button>
                                 </form>
                             </div>
                         </div>
@@ -77,25 +118,27 @@ $templates = $account->getTemplates('t_name');
             </div>
         </div>
     </div>
-<!-- getTemplate -->
-<script type="text/javascript">
-function getTemplate(t_name) {
+    <!-- getTemplate -->
+    <script type="text/javascript">
+
+        $( document ).ready(function() {
+            document.getElementById("deleteTemplate").disabled = $("#selectTemplate").val() === "0";
+        });
+        function getTemplate(t_name) {
+            document.getElementById("deleteTemplate").disabled = $("#selectTemplate").val() === "0";
             $.ajax({
                 type: "POST",
-                url: "<?php echo $url . "settings/actions/changeTemplate.php"; ?>",
+                url: "<?php echo $url . "settings/actions/templateSettings.php"; ?>",
                 data: "t_name=" + t_name + "&change=true",
                 success: function (response) {
-                    $("#templateName").val(response.t_name);
-                    $("#templateTitle").val(response.t_title);
-                    $("#templateContent").val(response.t_content);
-                },
-                error: function () {
-                } // Eğer ki kontrolAjax.php ile iletişim kuramazsa hata olduğunu belirtecek
-            });
+                    $('#templateName').val(response.t_name);
+                    $('#templateTitle').val(response.t_title);
+                    $('#templateContent').val(response.t_content);
+                }
+            })}
 
+    </script>
 
-}
-</script>
 <?php
 // Footer
 include __DIR__ . "/footer.php";
