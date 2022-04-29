@@ -72,20 +72,25 @@ class Account
     public function setTemplate($values): array
     {
         try {
-            $logger = new Logger($this->db,$this->username);
-            $template = $this->db->prepare("INSERT INTO templates set
+            $logger = new Logger($this->db, $this->username);
+            if ($this->isValidTemplate($values)) {
+                $template = $this->db->prepare("INSERT INTO templates set
                t_title=:t_title,
                t_content=:t_content,
                 t_user_id=:t_user_id,
                  t_name=:t_name
             ");
-            $save = $template->execute(array(
-                't_name' => $values['t_name'],
-                't_user_id' => $this->getUser('u_id'),
-                't_title' => $values['t_title'],
-                't_content' => $values['t_content']
-            ));
-            $logger->eventLogger("[$values[t_name]] adlı içerik taslağı oluşturuldu.");
+                $save = $template->execute(array(
+                    't_name' => $values['t_name'],
+                    't_user_id' => $this->getUser('u_id'),
+                    't_title' => $values['t_title'],
+                    't_content' => $values['t_content']
+                ));
+                $logger->eventLogger("[$values[t_name]] adlı içerik taslağı oluşturuldu.");
+            } else {
+                $logger->eventLogger("[$values[t_name]] adlı içerik taslağı oluşturulamadı.");
+                return ['status' => 'error', 'redirect' => 'templates'];
+            }
         } catch (Exception) {
             return ['status' => 'server-error', 'redirect' => 'templates'];
         }
@@ -97,33 +102,38 @@ class Account
         return ['status' => 'server-error', 'redirect' => 'templates'];
     }
 
-    public function updateTemplate($values,$oldTemplateName): array
+    public function updateTemplate($values, $oldTemplateName): array
     {
         try {
+            $logger = new Logger($this->db, $this->username);
             // Get Old Template Name
             $getTemplateId = $this->db->prepare("SELECT * from templates where t_user_id=:t_user_id and t_name=:t_name");
             $getTemplateId->execute(array('t_user_id' => $this->getUser('u_id'), 't_name' => $oldTemplateName));
             $getValue = $getTemplateId->fetch(PDO::FETCH_ASSOC);
-            // Update Template
-            $template = $this->db->prepare("UPDATE templates set
+            if ($this->isValidTemplate($values)) {
+                // Update Template
+                $template = $this->db->prepare("UPDATE templates set
                t_title=:t_title,
                t_content=:t_content,
                t_name=:t_name
                where t_user_id=:t_user_id and t_id=:t_id
             ");
-            $update = $template->execute(array(
-                't_id' => $getValue['t_id'],
-                't_name' => $values['t_name'],
-                't_user_id' => $this->getUser('u_id'),
-                't_title' => $values['t_title'],
-                't_content' => $values['t_content']
-            ));
-            // Logging
-            $logger = new Logger($this->db,$this->username);
-            if ($values['t_name'] !== $oldTemplateName) {
-                $logger->eventLogger("[$oldTemplateName] adlı içerik taslağı güncellendi. İçerik Taslağının yeni adı => [$values[t_name]]");
+                $update = $template->execute(array(
+                    't_id' => $getValue['t_id'],
+                    't_name' => $values['t_name'],
+                    't_user_id' => $this->getUser('u_id'),
+                    't_title' => $values['t_title'],
+                    't_content' => $values['t_content']
+                ));
+                // Logging
+                if ($values['t_name'] !== $oldTemplateName) {
+                    $logger->eventLogger("[$oldTemplateName] adlı içerik taslağı güncellendi. İçerik Taslağının yeni adı => [$values[t_name]]");
+                } else {
+                    $logger->eventLogger("[$oldTemplateName] adlı içerik taslağı güncellendi.");
+                }
             } else {
-                $logger->eventLogger("[$oldTemplateName] adlı içerik taslağı güncellendi.");
+                $logger->eventLogger("[$oldTemplateName] adlı içerik taslağı güncellenemedi.");
+                return ['status' => 'error', 'redirect' => 'templates'];
             }
         } catch (Exception) {
             return ['status' => 'server-error', 'redirect' => 'templates'];
@@ -145,7 +155,7 @@ class Account
                 't_name' => $t_name,
                 't_user_id' => $this->getUser('u_id')
             ));
-            $logger = new Logger($this->db,$this->username);
+            $logger = new Logger($this->db, $this->username);
             $logger->eventLogger("[$t_name] adlı içerik taslağı silindi.");
         } catch (Exception) {
             return ['status' => 'server-error', 'redirect' => 'templates'];
@@ -171,7 +181,7 @@ class Account
                 'u_short_api_key' => $values['u_short_api_key'],
                 'u_short_api_id' => $values['u_short_api_id']
             ));
-            $logger = new Logger($this->db,$this->username);
+            $logger = new Logger($this->db, $this->username);
             $logger->eventLogger("Kısa Link API Ayarlarınız güncellendi.");
         } catch (Exception) {
             return ['status' => 'server-error', 'redirect' => 'dashboard'];
@@ -182,6 +192,19 @@ class Account
         }
 
         return ['status' => 'server-error', 'redirect' => 'short-link-api'];
+    }
+
+    public function isValidTemplate($array)
+    {
+        $templateTitle = isset(explode('{title}', $array['t_title'])[1]);
+        $templateContent = isset(explode('{content}', $array['t_content'])[1]);
+
+        if ($templateTitle && $templateContent !== false) {
+            return true;
+        } else {
+            return false;
+        }
+
     }
 
 

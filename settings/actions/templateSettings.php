@@ -3,7 +3,9 @@ $db = "";
 $url = "";
 // Required Files
 require_once __DIR__ . '/header.php';
+
 use Apkpanel\Account;
+
 $account = new Account($db, $_SESSION['username']);
 if (isset($_POST['change'])) {
     if ($_POST['t_name'] !== "0") {
@@ -14,12 +16,12 @@ if (isset($_POST['change'])) {
     }
 }
 if (isset($_POST['saveTemplate'])) {
-    $values = ['t_name' => $_POST['templateName'],'t_title' => $_POST['templateTitle'],'t_content' => $_POST['templateContent']];
+    $values = ['t_name' => $_POST['templateName'], 't_title' => $_POST['templateTitle'], 't_content' => $_POST['templateContent']];
     if ($_POST['selectTemplate'] == "0") {
-       $status = $account->setTemplate($values);
+        $status = $account->setTemplate($values);
         header("Location: $url" . "$status[redirect].php?status=$status[status]");
     } elseif ($_POST['selectTemplate'] !== "0") {
-        $status = $account->updateTemplate($values,$_POST['selectTemplate']);
+        $status = $account->updateTemplate($values, $_POST['selectTemplate']);
         header("Location: $url" . "$status[redirect].php?status=$status[status]");
     }
 }

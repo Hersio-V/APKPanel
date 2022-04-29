@@ -122,6 +122,9 @@ if (!isset($_SESSION[$config->getSessionName()])) {
                             <li>
                                 <a href="<?php echo $url . 'short-link-api.php'; ?>">Kısa Link API</a>
                             </li>
+                            <li>
+                                <a href="<?php echo $url . 'sites.php'; ?>">Siteler</a>
+                            </li>
                         </ul>
                     </li>
                 </ul>
