@@ -22,7 +22,7 @@ class Account
 
     }
 
-    public function getUser($key): string
+    public function getUser($key)
     {
         try {
             $user = $this->db->prepare("SELECT * from users where u_username=:u_username");
@@ -35,6 +35,7 @@ class Account
         }
         return "Hata!";
     }
+
 
     public function getTemplates($key): array
     {

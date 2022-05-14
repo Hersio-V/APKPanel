@@ -19,16 +19,17 @@ if (isset($_POST['saveTemplate'])) {
     $values = ['t_name' => $_POST['templateName'], 't_title' => $_POST['templateTitle'], 't_content' => $_POST['templateContent']];
     if ($_POST['selectTemplate'] == "0") {
         $status = $account->setTemplate($values);
-        header("Location: $url" . "$status[redirect].php?status=$status[status]");
     } elseif ($_POST['selectTemplate'] !== "0") {
         $status = $account->updateTemplate($values, $_POST['selectTemplate']);
-        header("Location: $url" . "$status[redirect].php?status=$status[status]");
     }
 }
 if (isset($_POST['deleteTemplate'])) {
     $t_name = $_POST['templateName'];
     if ($_POST['selectTemplate'] !== "0") {
         $status = $account->deleteTemplate($t_name);
-        header("Location: $url" . "$status[redirect].php?status=$status[status]");
     }
+}
+
+if (isset($status)) {
+    header("Location: $url" . "$status[redirect].php?status=$status[status]");
 }

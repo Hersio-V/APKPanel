@@ -59,8 +59,7 @@ $account = new Account($db,$username);
                                                    class=" form-control-label">Site URL</label>
                                         </div>
                                         <div class="col-12 col-md-9">
-                                            <input type="text" id="s_url" name="s_url"
-                                                   class="form-control">
+                                            <input type="text" required id="s_url" name="s_url" placeholder="http://example.com" autocomplete="off" class="form-control">
                                         </div>
                                     </div>
 
@@ -70,7 +69,7 @@ $account = new Account($db,$username);
                                                    class=" form-control-label">Kullanıcı Adı</label>
                                         </div>
                                         <div class="col-12 col-md-9">
-                                            <input type="text" id="s_username" name="s_username"
+                                            <input required type="text" id="s_username" autocomplete="off" name="s_username"
                                                    class="form-control">
                                         </div>
                                     </div>
@@ -78,17 +77,17 @@ $account = new Account($db,$username);
                                     <div class="row form-group">
                                         <div class="col col-md-3">
                                             <label for="s_password"
-                                                   class=" form-control-label">Şifre</label>
+                                                   class="form-control-label">Şifre</label>
                                         </div>
                                         <div class="col-12 col-md-9">
-                                            <input type="text" id="s_password" name="s_password"
+                                            <input  required type="password" autocomplete="off" id="s_password" name="s_password"
                                                    class="form-control">
                                         </div>
                                     </div>
 
                                     <div class="row form-group">
                                         <div class="col col-md-3">
-                                            <label for="s_theme" class=" form-control-label">Tema</label>
+                                            <label for="s_theme" class="form-control-label">Tema</label>
                                         </div>
                                         <div class="col-12 col-md-9">
                                             <select name="s_theme" id="s_theme" class="form-control">
@@ -112,7 +111,7 @@ $account = new Account($db,$username);
                                             <label for="s_shortlink_status" class=" form-control-label">Link Kısaltma</label>
                                         </div>
                                     <label class="switch switch-3d switch-warning mr-3">
-                                        <input type="checkbox" class="switch-input" checked="false">
+                                        <input id="s_shortlink_status" type="checkbox" name="s_shortlink_status" class="switch-input" checked="false">
                                         <span class="switch-label"></span>
                                         <span class="switch-handle"></span>
                                     </label>
